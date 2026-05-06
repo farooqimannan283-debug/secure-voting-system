@@ -1,8 +1,5 @@
-<!-- templates/register.html -->
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
     <meta charset="UTF-8">
@@ -29,37 +26,75 @@
             justify-content:center;
             align-items:center;
 
+            background:
+            radial-gradient(circle at top left,#173b88 0%,transparent 30%),
+            radial-gradient(circle at bottom right,#32105a 0%,transparent 30%),
+            linear-gradient(135deg,#000428,#000814,#020024);
+
             overflow:hidden;
 
-            background:
-            radial-gradient(circle at top left,#2563eb 0%,transparent 28%),
-            radial-gradient(circle at bottom right,#7e22ce 0%,transparent 30%),
-            #020617;
+            position:relative;
+        }
 
-            color:white;
+        body::before{
+
+            content:"";
+
+            position:absolute;
+
+            width:700px;
+            height:700px;
+
+            background:rgba(0,119,255,0.08);
+
+            filter:blur(120px);
+
+            border-radius:50%;
+
+            top:-200px;
+            left:-200px;
+        }
+
+        body::after{
+
+            content:"";
+
+            position:absolute;
+
+            width:700px;
+            height:700px;
+
+            background:rgba(128,0,255,0.08);
+
+            filter:blur(120px);
+
+            border-radius:50%;
+
+            bottom:-200px;
+            right:-200px;
         }
 
         .card{
 
-            width:430px;
+            width:380px;
 
-            background:
-            linear-gradient(
-                145deg,
-                rgba(255,255,255,0.08),
-                rgba(255,255,255,0.03)
-            );
+            padding:30px;
+
+            border-radius:30px;
+
+            background:rgba(7,12,40,0.75);
 
             border:1px solid rgba(255,255,255,0.08);
 
-            border-radius:34px;
-
-            padding:38px;
-
-            backdrop-filter:blur(18px);
+            backdrop-filter:blur(25px);
 
             box-shadow:
-            0 0 50px rgba(37,99,235,0.25);
+            0 0 50px rgba(0,119,255,0.15),
+            inset 0 0 20px rgba(255,255,255,0.03);
+
+            position:relative;
+
+            z-index:10;
         }
 
         .top{
@@ -68,68 +103,68 @@
             justify-content:space-between;
             align-items:flex-start;
 
-            margin-bottom:25px;
+            margin-bottom:30px;
         }
 
         .logo{
 
             display:flex;
-            gap:15px;
+            gap:12px;
             align-items:flex-start;
         }
 
         .icon{
 
-            width:52px;
-            height:52px;
+            width:42px;
+            height:42px;
 
-            border-radius:18px;
-
-            background:
-            linear-gradient(
-                145deg,
-                #2563eb,
-                #7c3aed
-            );
+            border-radius:14px;
 
             display:flex;
             justify-content:center;
             align-items:center;
 
-            font-size:24px;
-        }
-
-        h1{
+            background:linear-gradient(135deg,#5b5bff,#6d28d9);
 
             font-size:22px;
-            font-weight:700;
 
+            box-shadow:0 0 20px rgba(91,91,255,0.4);
+        }
+
+        .title{
+
+            color:white;
+            font-size:17px;
+            font-weight:700;
             line-height:1.2;
         }
 
-        .sub{
+        .subtitle{
 
-            color:#cbd5e1;
+            margin-top:10px;
 
-            font-size:14px;
+            color:#9ca3af;
 
-            margin-top:8px;
+            font-size:13px;
+            line-height:1.6;
         }
 
         .live{
 
-            padding:10px 16px;
+            padding:10px 14px;
 
             border-radius:16px;
 
-            background:rgba(255,255,255,0.08);
+            background:rgba(255,255,255,0.05);
 
-            border:1px solid rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.06);
 
-            color:#22c55e;
+            color:white;
 
-            font-size:13px;
+            font-size:12px;
             font-weight:700;
+
+            text-align:center;
 
             display:flex;
             align-items:center;
@@ -143,18 +178,28 @@
 
             border-radius:50%;
 
-            background:#22c55e;
+            background:#00ff66;
 
-            box-shadow:
-            0 0 12px #22c55e;
+            box-shadow:0 0 12px #00ff66;
+        }
+
+        form{
+
+            margin-top:20px;
+        }
+
+        .input-box{
+
+            margin-bottom:22px;
         }
 
         label{
 
             display:block;
 
-            margin-top:20px;
             margin-bottom:10px;
+
+            color:white;
 
             font-size:15px;
             font-weight:600;
@@ -164,62 +209,66 @@
 
             width:100%;
 
-            padding:18px;
+            padding:16px 18px;
 
             border:none;
             outline:none;
 
             border-radius:18px;
 
-            font-size:16px;
+            background:#e5e7eb;
 
-            background:#e2e8f0;
+            font-size:16px;
+            font-weight:500;
+
+            transition:0.3s;
         }
 
-        button{
+        input:focus{
+
+            transform:scale(1.02);
+
+            box-shadow:0 0 20px rgba(59,130,246,0.4);
+        }
+
+        .btn{
 
             width:100%;
 
-            margin-top:30px;
-
-            padding:18px;
+            padding:17px;
 
             border:none;
 
             border-radius:18px;
 
-            font-size:17px;
-            font-weight:700;
+            background:linear-gradient(90deg,#2563eb,#3b82f6);
 
             color:white;
 
+            font-size:16px;
+            font-weight:700;
+
             cursor:pointer;
 
-            background:
-            linear-gradient(
-                90deg,
-                #2563eb,
-                #3b82f6
-            );
-
             transition:0.3s;
+
+            box-shadow:0 10px 30px rgba(37,99,235,0.35);
         }
 
-        button:hover{
+        .btn:hover{
 
-            transform:translateY(-2px);
+            transform:translateY(-3px) scale(1.02);
 
-            box-shadow:
-            0 0 25px rgba(37,99,235,0.45);
+            box-shadow:0 15px 40px rgba(37,99,235,0.45);
         }
 
         .footer{
 
+            margin-top:22px;
+
             text-align:center;
 
-            margin-top:24px;
-
-            color:#94a3b8;
+            color:#6b7280;
 
             font-size:13px;
         }
@@ -227,45 +276,80 @@
         .offline{
 
             text-align:center;
+
+            color:white;
+
+            padding:20px 10px;
         }
 
-        .offline h2{
+        .offline h1{
 
-            font-size:42px;
+            font-size:34px;
 
-            margin-top:40px;
+            margin-bottom:14px;
         }
 
         .offline p{
 
-            margin-top:15px;
+            color:#9ca3af;
 
-            color:#cbd5e1;
+            font-size:15px;
+        }
+
+        .vote-alert{
+
+            width:100%;
+
+            margin-bottom:20px;
+
+            padding:16px;
+
+            border-radius:16px;
+
+            background:rgba(255,0,0,0.15);
+
+            border:1px solid rgba(255,0,0,0.35);
+
+            color:#fecaca;
+
+            text-align:center;
+
+            font-size:14px;
+            font-weight:600;
+
+            backdrop-filter:blur(10px);
         }
 
     </style>
 
 </head>
-
 <body>
 
-{% if election_live %}
+<div class="card">
 
-<form class="card" method="POST">
+    {% if election_live %}
 
     <div class="top">
 
-        <div class="logo">
+        <div>
 
-            <div class="icon">🗳️</div>
+            <div class="logo">
 
-            <div>
+                <div class="icon">
+                    🗳️
+                </div>
 
-                <h1>Secure Voting<br>System</h1>
+                <div>
 
-                <div class="sub">
-                    Enter your details securely
-                    to proceed for online voting.
+                    <div class="title">
+                        Secure Voting<br>System
+                    </div>
+
+                    <div class="subtitle">
+                        Enter your details securely<br>
+                        to proceed for online voting.
+                    </div>
+
                 </div>
 
             </div>
@@ -273,44 +357,88 @@
         </div>
 
         <div class="live">
+
             <div class="dot"></div>
-            LIVE ELECTION
+
+            LIVE<br>ELECTION
+
         </div>
 
     </div>
 
-    <label>Full Name</label>
-    <input type="text" name="fullname" required>
+    <form method="POST">
 
-    <label>Phone Number</label>
-    <input type="text" name="phone" required>
+        {% if error %}
 
-    <label>Date of Birth</label>
-    <input type="date" name="dob" required>
+        <div class="vote-alert">
+            {{ error }}
+        </div>
 
-    <button type="submit">
-        Proceed to Vote →
-    </button>
+        {% endif %}
+
+        <div class="input-box">
+
+            <label>Full Name</label>
+
+            <input
+                type="text"
+                name="fullname"
+                placeholder="Enter your full name"
+                required
+            >
+
+        </div>
+
+        <div class="input-box">
+
+            <label>Phone Number</label>
+
+            <input
+                type="text"
+                name="phone"
+                placeholder="Enter phone number"
+                required
+            >
+
+        </div>
+
+        <div class="input-box">
+
+            <label>Date of Birth</label>
+
+            <input
+                type="date"
+                name="dob"
+                required
+            >
+
+        </div>
+
+        <button class="btn" type="submit">
+            Proceed to Vote →
+        </button>
+
+    </form>
 
     <div class="footer">
         Secure Voting System © 2026
     </div>
 
-</form>
+    {% else %}
 
-{% else %}
+    <div class="offline">
 
-<div class="card offline">
+        <h1>No Live Election</h1>
 
-    <h2>No Live Election</h2>
+        <p>
+            Online election is currently unavailable.
+        </p>
 
-    <p>
-        Online election is currently unavailable.
-    </p>
+    </div>
+
+    {% endif %}
 
 </div>
-
-{% endif %}
 
 </body>
 </html>
