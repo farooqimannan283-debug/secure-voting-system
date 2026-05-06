@@ -65,8 +65,37 @@ init_db()
 
 @app.route("/")
 def home():
-    return redirect("/register")
 
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    # ONLINE ELECTION
+    c.execute("""
+    SELECT * FROM elections
+    WHERE mode='online'
+    AND status='live'
+    LIMIT 1
+    """)
+
+    online = c.fetchone()
+
+    # EVM ELECTION
+    c.execute("""
+    SELECT * FROM elections
+    WHERE mode='evm'
+    AND status='live'
+    LIMIT 1
+    """)
+
+    evm = c.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "landing.html",
+        online_live=True if online else False,
+        evm_live=True if evm else False
+    )
 # =========================================
 # ADMIN LOGIN
 # =========================================
