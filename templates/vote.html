@@ -1,521 +1,248 @@
-<!-- FILE NAME: templates/vote.html -->
+<!-- templates/vote.html -->
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Now</title>
 
-<title>Cast Your Vote</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
 
-<style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-}
+        body{
 
-body{
+            min-height:100vh;
 
-    min-height:100vh;
+            padding:50px;
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+            background:
+            radial-gradient(circle at top left,#2563eb 0%,transparent 28%),
+            radial-gradient(circle at bottom right,#7e22ce 0%,transparent 30%),
+            #020617;
 
-    overflow:hidden;
+            color:white;
+        }
 
-    background:
-    radial-gradient(circle at top left,#1d4ed8 0%,transparent 28%),
-    radial-gradient(circle at bottom right,#581c87 0%,transparent 28%),
-    #020617;
+        .title{
 
-    position:relative;
-}
+            text-align:center;
 
-/* BACKGROUND GLOW */
+            margin-bottom:40px;
+        }
 
-body::before{
+        .title h1{
 
-    content:'';
+            font-size:55px;
+            font-weight:800;
+        }
 
-    position:absolute;
+        .title p{
 
-    width:500px;
-    height:500px;
+            margin-top:12px;
 
-    background:#2563eb;
+            color:#cbd5e1;
 
-    filter:blur(170px);
+            font-size:18px;
+        }
 
-    opacity:0.16;
+        .vote-alert{
 
-    top:-180px;
-    left:-180px;
-}
+            width:100%;
+            max-width:700px;
 
-body::after{
+            margin:0 auto 30px auto;
 
-    content:'';
+            padding:18px;
 
-    position:absolute;
+            border-radius:18px;
 
-    width:450px;
-    height:450px;
+            text-align:center;
 
-    background:#7c3aed;
+            font-size:16px;
+            font-weight:600;
 
-    filter:blur(170px);
+            color:#fecaca;
 
-    opacity:0.16;
+            background:rgba(239,68,68,0.15);
 
-    bottom:-180px;
-    right:-180px;
-}
+            border:1px solid rgba(239,68,68,0.35);
 
-/* MAIN CARD */
+            backdrop-filter:blur(12px);
+        }
 
-.vote-card{
+        .grid{
 
-    width:1100px;
+            display:grid;
 
-    background:rgba(15,23,42,0.82);
+            grid-template-columns:
+            repeat(auto-fit,minmax(280px,1fr));
 
-    border:1px solid rgba(255,255,255,0.08);
+            gap:35px;
 
-    border-radius:35px;
+            max-width:1200px;
 
-    padding:45px;
+            margin:auto;
+        }
 
-    backdrop-filter:blur(22px);
+        .card{
 
-    box-shadow:
-    0 0 40px rgba(37,99,235,0.22),
-    0 25px 60px rgba(0,0,0,0.55);
+            background:
+            linear-gradient(
+                145deg,
+                rgba(255,255,255,0.08),
+                rgba(255,255,255,0.03)
+            );
 
-    position:relative;
+            border:1px solid rgba(255,255,255,0.08);
 
-    z-index:5;
+            border-radius:34px;
 
-    animation:fadeUp 0.8s ease;
-}
+            overflow:hidden;
 
-@keyframes fadeUp{
+            backdrop-filter:blur(18px);
 
-    from{
-        opacity:0;
-        transform:translateY(30px);
-    }
+            transition:0.35s;
 
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
+            box-shadow:
+            0 0 40px rgba(0,0,0,0.3);
+        }
 
-/* HEADER */
+        .card:hover{
 
-.top-section{
+            transform:
+            translateY(-10px)
+            scale(1.02);
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+            box-shadow:
+            0 0 40px rgba(37,99,235,0.4);
+        }
 
-    margin-bottom:35px;
-}
+        .image{
 
-.left{
+            width:100%;
+            height:260px;
 
-    display:flex;
-    align-items:center;
-    gap:20px;
-}
+            object-fit:cover;
+        }
 
-.logo{
+        .content{
 
-    width:85px;
-    height:85px;
+            padding:28px;
+        }
 
-    border-radius:25px;
+        .name{
 
-    background:linear-gradient(135deg,#2563eb,#7c3aed);
+            font-size:28px;
+            font-weight:700;
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+            margin-bottom:20px;
+        }
 
-    font-size:38px;
+        button{
 
-    color:white;
+            width:100%;
 
-    box-shadow:0 0 25px rgba(59,130,246,0.45);
-}
+            padding:16px;
 
-.left h1{
+            border:none;
 
-    color:white;
+            border-radius:18px;
 
-    font-size:42px;
+            cursor:pointer;
 
-    font-weight:800;
-}
+            color:white;
 
-.left p{
+            font-size:16px;
+            font-weight:700;
 
-    color:#94a3b8;
+            background:
+            linear-gradient(
+                90deg,
+                #2563eb,
+                #3b82f6
+            );
 
-    margin-top:8px;
-}
+            transition:0.3s;
+        }
 
-.live-box{
+        button:hover{
 
-    display:flex;
-    align-items:center;
-    gap:10px;
+            transform:translateY(-2px);
 
-    background:rgba(255,255,255,0.05);
+            box-shadow:
+            0 0 25px rgba(37,99,235,0.45);
+        }
 
-    border:1px solid rgba(255,255,255,0.08);
-
-    padding:14px 22px;
-
-    border-radius:16px;
-
-    color:white;
-
-    font-size:14px;
-
-    font-weight:600;
-}
-
-.live-dot{
-
-    width:12px;
-    height:12px;
-
-    border-radius:50%;
-
-    background:#22c55e;
-
-    box-shadow:0 0 14px #22c55e;
-
-    animation:pulse 1.5s infinite;
-}
-
-@keyframes pulse{
-
-    0%{
-        transform:scale(1);
-    }
-
-    50%{
-        transform:scale(1.3);
-    }
-
-    100%{
-        transform:scale(1);
-    }
-}
-
-/* CANDIDATES GRID */
-
-.candidate-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-
-    gap:25px;
-}
-
-/* CANDIDATE CARD */
-
-.candidate-card{
-
-    position:relative;
-
-    background:rgba(255,255,255,0.04);
-
-    border:2px solid rgba(255,255,255,0.06);
-
-    border-radius:28px;
-
-    padding:25px;
-
-    text-align:center;
-
-    transition:0.35s;
-
-    cursor:pointer;
-
-    overflow:hidden;
-}
-
-.candidate-card:hover{
-
-    transform:translateY(-8px);
-
-    border-color:#3b82f6;
-
-    box-shadow:0 0 30px rgba(59,130,246,0.25);
-}
-
-.candidate-card input{
-
-    display:none;
-}
-
-.candidate-card input:checked + .content{
-
-    border-color:#3b82f6;
-}
-
-.content{
-
-    border:2px solid transparent;
-
-    border-radius:22px;
-
-    padding:10px;
-
-    transition:0.3s;
-}
-
-.candidate-image{
-
-    width:120px;
-    height:120px;
-
-    border-radius:50%;
-
-    object-fit:cover;
-
-    border:4px solid rgba(255,255,255,0.08);
-
-    margin-bottom:20px;
-
-    background:#0f172a;
-}
-
-.candidate-name{
-
-    color:white;
-
-    font-size:24px;
-
-    font-weight:700;
-
-    margin-bottom:10px;
-}
-
-.vote-text{
-
-    color:#94a3b8;
-
-    font-size:14px;
-}
-
-/* RADIO CIRCLE */
-
-.select-circle{
-
-    width:26px;
-    height:26px;
-
-    border-radius:50%;
-
-    border:3px solid #3b82f6;
-
-    margin:18px auto 0;
-
-    position:relative;
-}
-
-.candidate-card input:checked + .content .select-circle::after{
-
-    content:'';
-
-    width:12px;
-    height:12px;
-
-    border-radius:50%;
-
-    background:#3b82f6;
-
-    position:absolute;
-
-    top:50%;
-    left:50%;
-
-    transform:translate(-50%,-50%);
-}
-
-/* BUTTON */
-
-.submit-btn{
-
-    width:100%;
-
-    margin-top:35px;
-
-    border:none;
-
-    padding:18px;
-
-    border-radius:18px;
-
-    background:linear-gradient(135deg,#2563eb,#06b6d4);
-
-    color:white;
-
-    font-size:18px;
-
-    font-weight:700;
-
-    cursor:pointer;
-
-    transition:0.3s;
-
-    box-shadow:0 0 25px rgba(59,130,246,0.35);
-}
-
-.submit-btn:hover{
-
-    transform:translateY(-3px);
-
-    box-shadow:0 0 35px rgba(59,130,246,0.5);
-}
-
-/* FOOTER */
-
-.footer{
-
-    margin-top:28px;
-
-    text-align:center;
-
-    color:#64748b;
-
-    font-size:14px;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:900px){
-
-    .vote-card{
-
-        width:95%;
-
-        padding:30px 22px;
-    }
-
-    .top-section{
-
-        flex-direction:column;
-        align-items:flex-start;
-        gap:20px;
-    }
-
-    .left h1{
-
-        font-size:32px;
-    }
-
-}
-
-</style>
+    </style>
 
 </head>
 
 <body>
 
-<form method="POST" class="vote-card">
+    <div class="title">
 
-<div class="top-section">
+        <h1>Cast Your Vote</h1>
 
-<div class="left">
+        <p>
+            Select your preferred candidate securely.
+        </p>
 
-<div class="logo">
-🗳️
-</div>
+    </div>
 
-<div>
+    {% if error %}
 
-<h1>Cast Your Vote</h1>
+    <div class="vote-alert">
+        {{ error }}
+    </div>
 
-<p>
-Secure Voting System Election Portal
-</p>
+    {% endif %}
 
-</div>
+    <div class="grid">
 
-</div>
+        {% for c in candidates %}
 
-<div class="live-box">
+        <form method="POST" class="card">
 
-<div class="live-dot"></div>
+            <img
+                src="{{ url_for('static', filename='uploads/' + c[1]) }}"
+                class="image"
+            >
 
-LIVE ELECTION
+            <div class="content">
 
-</div>
+                <div class="name">
+                    {{ c[0] }}
+                </div>
 
-</div>
+                <input
+                    type="hidden"
+                    name="candidate"
+                    value="{{ c[0] }}"
+                >
 
-<div class="candidate-grid">
+                <button type="submit">
+                    Vote Now →
+                </button>
 
-{% for c in candidates %}
+            </div>
 
-<label class="candidate-card">
+        </form>
 
-<input 
-type="radio" 
-name="candidate" 
-value="{{ c[0] }}" 
-required>
+        {% endfor %}
 
-<div class="content">
-
-<img 
-src="/static/uploads/{{ c[1] }}" 
-class="candidate-image"
-onerror="this.src='https://via.placeholder.com/120'">
-
-<div class="candidate-name">
-{{ c[0] }}
-</div>
-
-<div class="vote-text">
-Click to cast your vote
-</div>
-
-<div class="select-circle"></div>
-
-</div>
-
-</label>
-
-{% endfor %}
-
-</div>
-
-<button type="submit" class="submit-btn">
-Submit Vote →
-</button>
-
-<div class="footer">
-Secure Voting System © 2026
-</div>
-
-</form>
+    </div>
 
 </body>
-
 </html>

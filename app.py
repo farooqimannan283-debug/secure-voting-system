@@ -502,6 +502,7 @@ def register():
 @app.route("/vote", methods=["GET", "POST"])
 def vote():
 
+    # USER MUST REGISTER FIRST
     if "phone" not in session:
         return redirect("/register")
 
@@ -510,6 +511,7 @@ def vote():
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
 
+    # GET LIVE ONLINE ELECTION
     c.execute("""
     SELECT *
     FROM elections
@@ -520,6 +522,7 @@ def vote():
 
     election = c.fetchone()
 
+    # NO LIVE ELECTION
     if not election:
 
         conn.close()
@@ -528,6 +531,7 @@ def vote():
 
     eid = election[0]
 
+    # GET CANDIDATES
     c.execute("""
     SELECT name,image
     FROM candidates
@@ -536,12 +540,17 @@ def vote():
 
     candidates = c.fetchall()
 
+    # ERROR VARIABLE
+    error = None
+
+    # SUBMIT VOTE
     if request.method == "POST":
 
         candidate = request.form["candidate"]
 
         try:
 
+            # SAVE VOTE
             c.execute("""
             INSERT INTO votes
             VALUES(NULL,?,?,?)
@@ -549,24 +558,26 @@ def vote():
 
             conn.commit()
 
-        except Exception:
+            # CLEAR SESSION
+            session.clear()
 
-            conn.rollback()
             conn.close()
 
-            return "Already voted"
+            return redirect("/success")
 
-        session.clear()
+        except Exception:
 
-        conn.close()
+            # ROLLBACK IF DUPLICATE
+            conn.rollback()
 
-        return redirect("/success")
+            error = "You have already voted in this election."
 
     conn.close()
 
     return render_template(
         "vote.html",
-        candidates=candidates
+        candidates=candidates,
+        error=error
     )
 
 # =========================================
