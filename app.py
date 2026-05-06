@@ -3,7 +3,11 @@ import sqlite3
 import os
 import time
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder="public",
+    static_folder="public/static"
+)
 app.secret_key = "secret123"
 
 UPLOAD_FOLDER = "static/uploads"
