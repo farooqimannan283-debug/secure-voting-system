@@ -243,6 +243,30 @@
             color:#cbd5e1;
         }
 
+       .vote-alert{
+
+    width:100%;
+
+    margin-bottom:20px;
+
+    padding:16px;
+
+    border-radius:16px;
+
+    text-align:center;
+
+    font-size:15px;
+    font-weight:600;
+
+    color:#fecaca;
+
+    background:rgba(239,68,68,0.15);
+
+    border:1px solid rgba(239,68,68,0.35);
+
+    backdrop-filter:blur(12px);
+}
+
     </style>
 
 </head>
@@ -279,7 +303,15 @@
 
     </div>
 
-    <label>Full Name</label>
+    {% if error %}
+
+<div class="vote-alert">
+    {{ error }}
+</div>
+
+{% endif %}
+
+<label>Full Name</label>
     <input type="text" name="fullname" required>
 
     <label>Phone Number</label>

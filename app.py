@@ -459,6 +459,7 @@ def register():
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
 
+    # LIVE ONLINE ELECTION
     c.execute("""
     SELECT *
     FROM elections
@@ -469,26 +470,56 @@ def register():
 
     election = c.fetchone()
 
-    conn.close()
-
+    # NO LIVE ELECTION
     if not election:
+
+        conn.close()
 
         return render_template(
             "register.html",
             election_live=False
         )
 
+    eid = election[0]
+
+    # FORM SUBMIT
     if request.method == "POST":
 
         fullname = request.form["fullname"]
         phone = request.form["phone"]
         dob = request.form["dob"]
 
+        # CHECK IF ALREADY VOTED
+        c.execute("""
+        SELECT *
+        FROM votes
+        WHERE election_id=?
+        AND phone=?
+        """, (eid, phone))
+
+        existing_vote = c.fetchone()
+
+        # ALREADY VOTED
+        if existing_vote:
+
+            conn.close()
+
+            return render_template(
+                "register.html",
+                election_live=True,
+                error="This phone number has already voted."
+            )
+
+        # SAVE SESSION
         session["fullname"] = fullname
         session["phone"] = phone
         session["dob"] = dob
 
+        conn.close()
+
         return redirect("/vote")
+
+    conn.close()
 
     return render_template(
         "register.html",
