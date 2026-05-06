@@ -1,0 +1,362 @@
+<!-- history.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Election History</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#020617;
+    color:white;
+    display:flex;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* BACKGROUND */
+
+body::before{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:#2563eb;
+    filter:blur(180px);
+    top:-200px;
+    left:-150px;
+    opacity:.35;
+    z-index:-1;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:#7c3aed;
+    filter:blur(180px);
+    bottom:-200px;
+    right:-150px;
+    opacity:.25;
+    z-index:-1;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:250px;
+    background:rgba(8,15,40,.88);
+    border-right:1px solid rgba(255,255,255,.05);
+    backdrop-filter:blur(20px);
+    padding:35px 18px;
+}
+
+.logo{
+    font-size:42px;
+    font-weight:800;
+    color:#3b82f6;
+    margin-bottom:45px;
+}
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.menu a{
+    text-decoration:none;
+    color:#d1d5db;
+    padding:16px 18px;
+    border-radius:14px;
+    transition:.3s;
+    font-weight:500;
+}
+
+.menu a:hover,
+.menu a.active{
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+    color:white;
+    box-shadow:0 0 20px rgba(59,130,246,.35);
+}
+
+/* MAIN */
+
+.main{
+    flex:1;
+    padding:32px;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:28px;
+}
+
+.title{
+    font-size:60px;
+    font-weight:800;
+}
+
+.subtitle{
+    margin-top:10px;
+    color:#94a3b8;
+}
+
+.archive-btn{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.05);
+    padding:14px 22px;
+    border-radius:16px;
+    font-weight:700;
+}
+
+/* CARD */
+
+.card{
+    background:rgba(7,15,40,.72);
+    border:1px solid rgba(255,255,255,.05);
+    border-radius:28px;
+    padding:25px;
+    backdrop-filter:blur(18px);
+}
+
+/* TABLE */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    text-align:left;
+    color:#cbd5e1;
+    padding:18px;
+    background:rgba(255,255,255,.03);
+}
+
+td{
+    padding:18px;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.mode{
+    padding:8px 14px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:700;
+}
+
+.online{
+    background:#1d4ed8;
+}
+
+.evm{
+    background:#9333ea;
+}
+
+.result-btn{
+    text-decoration:none;
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+    color:white;
+    padding:10px 16px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.empty{
+    text-align:center;
+    color:#94a3b8;
+    padding:60px 0;
+    font-size:18px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    body{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+    }
+
+    .title{
+        font-size:42px;
+    }
+
+    table{
+        font-size:14px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="logo">
+        SVS Admin
+    </div>
+
+    <div class="menu">
+
+        <a href="/admin/dashboard">
+            📊 Dashboard
+        </a>
+
+        <a href="/admin/new">
+            🗳 New Election
+        </a>
+
+        <a href="/admin/history" class="active">
+            📜 History
+        </a>
+
+    </div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+    <!-- TOPBAR -->
+
+    <div class="topbar">
+
+        <div>
+
+            <div class="title">
+                Election History
+            </div>
+
+            <div class="subtitle">
+                View previous election records and results
+            </div>
+
+        </div>
+
+        <div class="archive-btn">
+            📁 ARCHIVED ELECTIONS
+        </div>
+
+    </div>
+
+    <!-- HISTORY CARD -->
+
+    <div class="card">
+
+        {% if elections %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Election Name</th>
+                    <th>Mode</th>
+                    <th>Status</th>
+                    <th>Results</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for e in elections %}
+
+                <tr>
+
+                    <td>
+                        #{{ e[0] }}
+                    </td>
+
+                    <td>
+                        {{ e[1] }}
+                    </td>
+
+                    <td>
+
+                        {% if e[2] == "online" %}
+
+                        <span class="mode online">
+                            ONLINE
+                        </span>
+
+                        {% else %}
+
+                        <span class="mode evm">
+                            EVM
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ e[3] }}
+                    </td>
+
+                    <td>
+
+                        <a href="/admin/result/{{ e[0] }}" class="result-btn">
+
+                            View Results
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="empty">
+
+            No election history available
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!-- FILE NAME: templates/success.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vote Submitted</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    overflow:hidden;
+
+    background:
+    radial-gradient(circle at top left,#1d4ed8 0%,transparent 28%),
+    radial-gradient(circle at bottom right,#581c87 0%,transparent 28%),
+    #020617;
+
+    position:relative;
+}
+
+/* BACKGROUND GLOW */
+
+body::before{
+
+    content:'';
+
+    position:absolute;
+
+    width:500px;
+    height:500px;
+
+    background:#2563eb;
+
+    filter:blur(170px);
+
+    opacity:0.15;
+
+    top:-180px;
+    left:-180px;
+}
+
+body::after{
+
+    content:'';
+
+    position:absolute;
+
+    width:450px;
+    height:450px;
+
+    background:#7c3aed;
+
+    filter:blur(170px);
+
+    opacity:0.15;
+
+    bottom:-180px;
+    right:-180px;
+}
+
+/* SUCCESS CARD */
+
+.success-card{
+
+    width:560px;
+
+    background:rgba(15,23,42,0.82);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    border-radius:35px;
+
+    padding:55px 45px;
+
+    text-align:center;
+
+    backdrop-filter:blur(22px);
+
+    box-shadow:
+    0 0 40px rgba(37,99,235,0.25),
+    0 25px 60px rgba(0,0,0,0.55);
+
+    position:relative;
+
+    z-index:5;
+
+    animation:fadeUp 0.8s ease;
+}
+
+@keyframes fadeUp{
+
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ICON */
+
+.icon-box{
+
+    width:120px;
+    height:120px;
+
+    margin:auto;
+
+    border-radius:35px;
+
+    background:linear-gradient(135deg,#16a34a,#22c55e);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:60px;
+
+    color:white;
+
+    box-shadow:
+    0 0 35px rgba(34,197,94,0.55);
+
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.06);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
+/* TITLE */
+
+h1{
+
+    margin-top:35px;
+
+    font-size:52px;
+
+    color:white;
+
+    font-weight:800;
+}
+
+.highlight{
+
+    color:#22c55e;
+}
+
+/* SUBTEXT */
+
+.subtitle{
+
+    margin-top:18px;
+
+    color:#94a3b8;
+
+    font-size:18px;
+
+    line-height:1.8;
+}
+
+/* STATUS */
+
+.status-box{
+
+    margin-top:35px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+
+    background:rgba(255,255,255,0.05);
+
+    border:1px solid rgba(255,255,255,0.06);
+
+    border-radius:18px;
+
+    padding:16px;
+}
+
+.green-dot{
+
+    width:12px;
+    height:12px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+
+    box-shadow:0 0 14px #22c55e;
+}
+
+.status-box span{
+
+    color:white;
+
+    font-weight:600;
+
+    letter-spacing:0.5px;
+}
+
+/* THANK YOU */
+
+.thank-you{
+
+    margin-top:30px;
+
+    color:#cbd5e1;
+
+    font-size:17px;
+
+    line-height:1.7;
+}
+
+/* FOOTER */
+
+.footer{
+
+    margin-top:35px;
+
+    color:#64748b;
+
+    font-size:14px;
+
+    line-height:1.8;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:650px){
+
+    .success-card{
+
+        width:95%;
+
+        padding:40px 25px;
+    }
+
+    h1{
+
+        font-size:38px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="success-card">
+
+<div class="icon-box">
+✔
+</div>
+
+<h1>
+<span class="highlight">Vote</span> Submitted
+</h1>
+
+<p class="subtitle">
+Your vote has been securely recorded in the Secure Voting System.
+</p>
+
+<div class="status-box">
+
+<div class="green-dot"></div>
+
+<span>
+VOTE SUCCESSFULLY RECORDED
+</span>
+
+</div>
+
+<p class="thank-you">
+Thank you for participating in the democratic election process.
+Your response matters and has been securely counted.
+</p>
+
+<div class="footer">
+Redirecting to voter registration page...
+<br><br>
+Secure Voting System © 2026
+</div>
+
+</div>
+
+<script>
+
+setTimeout(()=>{
+
+window.location.href="/";
+
+},3000);
+
+</script>
+
+</body>
+
+</html>

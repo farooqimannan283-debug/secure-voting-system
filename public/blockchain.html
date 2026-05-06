@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Blockchain Log</title>
+<style>
+body{background:#111;color:white;font-family:monospace}
+.block{
+    border:1px solid #444;
+    margin:10px;
+    padding:10px;
+}
+</style>
+</head>
+<body>
+
+<h2>🔗 Blockchain Voting Log</h2>
+
+{% for b in data %}
+<div class="block">
+<p>ID: {{b[0]}}</p>
+<p>Data: {{b[2]}}</p>
+<p>Prev Hash: {{b[3]}}</p>
+<p>Hash: {{b[4]}}</p>
+</div>
+{% endfor %}
+
+</body>
+</html>

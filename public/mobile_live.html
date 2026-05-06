@@ -1,0 +1,585 @@
+<!-- FILE NAME: templates/mobile_live.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Live Results</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+
+    min-height:100vh;
+
+    background:
+    radial-gradient(circle at top left,#1d4ed8 0%,transparent 30%),
+    radial-gradient(circle at bottom right,#581c87 0%,transparent 30%),
+    #020617;
+
+    overflow-x:hidden;
+
+    padding:25px;
+
+    color:white;
+
+    position:relative;
+}
+
+/* GLOW EFFECTS */
+
+body::before{
+
+    content:'';
+
+    position:absolute;
+
+    width:400px;
+    height:400px;
+
+    background:#2563eb;
+
+    filter:blur(160px);
+
+    opacity:0.15;
+
+    top:-150px;
+    left:-150px;
+}
+
+body::after{
+
+    content:'';
+
+    position:absolute;
+
+    width:350px;
+    height:350px;
+
+    background:#7c3aed;
+
+    filter:blur(160px);
+
+    opacity:0.15;
+
+    bottom:-150px;
+    right:-150px;
+}
+
+/* MAIN CONTAINER */
+
+.container{
+
+    max-width:600px;
+
+    margin:auto;
+
+    position:relative;
+
+    z-index:5;
+}
+
+/* HEADER */
+
+.header{
+
+    text-align:center;
+
+    margin-bottom:30px;
+}
+
+.header h1{
+
+    font-size:38px;
+
+    font-weight:800;
+
+    color:white;
+}
+
+.header p{
+
+    margin-top:10px;
+
+    color:#94a3b8;
+
+    font-size:15px;
+}
+
+/* STATUS */
+
+.live-status{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+
+    margin-top:18px;
+}
+
+.dot{
+
+    width:12px;
+    height:12px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+
+    box-shadow:0 0 15px #22c55e;
+}
+
+.status-text{
+
+    font-size:13px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+    color:#22c55e;
+}
+
+/* CARD */
+
+.card{
+
+    background:rgba(15,23,42,0.82);
+
+    border:1px solid rgba(255,255,255,0.06);
+
+    border-radius:28px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    backdrop-filter:blur(20px);
+
+    box-shadow:
+    0 0 30px rgba(37,99,235,0.18),
+    0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* WINNER */
+
+.winner-box{
+
+    text-align:center;
+}
+
+.winner-label{
+
+    color:#94a3b8;
+
+    font-size:14px;
+
+    margin-bottom:10px;
+}
+
+.winner-name{
+
+    font-size:42px;
+
+    font-weight:800;
+
+    color:#3b82f6;
+}
+
+.winner-votes{
+
+    margin-top:10px;
+
+    font-size:20px;
+
+    font-weight:700;
+}
+
+/* CHART */
+
+.chart-box{
+
+    margin-top:20px;
+}
+
+/* CANDIDATE LIST */
+
+.section-title{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    margin-bottom:18px;
+
+    color:white;
+}
+
+.candidate-card{
+
+    background:rgba(255,255,255,0.04);
+
+    border:1px solid rgba(255,255,255,0.05);
+
+    border-radius:22px;
+
+    padding:18px;
+
+    margin-bottom:18px;
+}
+
+.top-row{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:12px;
+}
+
+.rank-name{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    color:white;
+}
+
+.percent{
+
+    color:#3b82f6;
+
+    font-weight:700;
+
+    font-size:18px;
+}
+
+.vote-count{
+
+    color:#94a3b8;
+
+    margin-bottom:12px;
+
+    font-size:14px;
+}
+
+/* PROGRESS BAR */
+
+.progress{
+
+    width:100%;
+
+    height:12px;
+
+    background:rgba(255,255,255,0.05);
+
+    border-radius:30px;
+
+    overflow:hidden;
+}
+
+.progress-bar{
+
+    height:100%;
+
+    border-radius:30px;
+
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+
+    transition:1s;
+}
+
+/* NO ELECTION */
+
+.no-election{
+
+    text-align:center;
+
+    padding:60px 20px;
+}
+
+.no-icon{
+
+    width:100px;
+    height:100px;
+
+    margin:auto;
+
+    border-radius:30px;
+
+    background:rgba(148,163,184,0.15);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:50px;
+
+    margin-bottom:25px;
+}
+
+.no-election h2{
+
+    font-size:42px;
+
+    font-weight:800;
+
+    color:white;
+}
+
+.no-election p{
+
+    margin-top:12px;
+
+    color:#94a3b8;
+}
+
+/* FOOTER */
+
+.footer{
+
+    text-align:center;
+
+    margin-top:30px;
+
+    color:#64748b;
+
+    font-size:14px;
+}
+
+@media(max-width:650px){
+
+    .header h1{
+
+        font-size:30px;
+    }
+
+    .winner-name{
+
+        font-size:32px;
+    }
+
+    .no-election h2{
+
+        font-size:32px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+{% if data and data|length > 0 %}
+
+<!-- HEADER -->
+
+<div class="header">
+
+<h1>
+📊 Live Election Results
+</h1>
+
+<p>
+Real-time voting analytics and candidate performance
+</p>
+
+<div class="live-status">
+
+<div class="dot"></div>
+
+<div class="status-text">
+LIVE RESULTS
+</div>
+
+</div>
+
+</div>
+
+<!-- WINNER -->
+
+<div class="card winner-box">
+
+<div class="winner-label">
+Current Leading Candidate
+</div>
+
+<div class="winner-name">
+{{data[0][0]}}
+</div>
+
+<div class="winner-votes">
+{{data[0][1]}} Votes • {{data[0][2]}}%
+</div>
+
+</div>
+
+<!-- CHART -->
+
+<div class="card">
+
+<div class="section-title">
+Vote Distribution
+</div>
+
+<div class="chart-box">
+
+<canvas id="voteChart"></canvas>
+
+</div>
+
+</div>
+
+<!-- CANDIDATES -->
+
+<div class="card">
+
+<div class="section-title">
+Candidate Performance
+</div>
+
+{% for r in data %}
+
+<div class="candidate-card">
+
+<div class="top-row">
+
+<div class="rank-name">
+{{loop.index}}. {{r[0]}}
+</div>
+
+<div class="percent">
+{{r[2]}}%
+</div>
+
+</div>
+
+<div class="vote-count">
+{{r[1]}} votes received
+</div>
+
+<div class="progress">
+
+<div class="progress-bar" style="width: {{r[2]}}%"></div>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<!-- NO LIVE ELECTION -->
+
+<div class="card no-election">
+
+<div class="no-icon">
+🗳️
+</div>
+
+<h2>
+No Live Election
+</h2>
+
+<p>
+There are currently no live election results available.
+</p>
+
+</div>
+
+{% endif %}
+
+<div class="footer">
+Secure Voting System © 2026
+</div>
+
+</div>
+
+{% if data and data|length > 0 %}
+
+<script>
+
+const labels = [
+{% for r in data %}
+"{{r[0]}}",
+{% endfor %}
+];
+
+const values = [
+{% for r in data %}
+{{r[1]}},
+{% endfor %}
+];
+
+new Chart(document.getElementById('voteChart'),{
+
+    type:'doughnut',
+
+    data:{
+
+        labels:labels,
+
+        datasets:[{
+
+            data:values,
+
+            backgroundColor:[
+                '#2563eb',
+                '#7c3aed',
+                '#06b6d4',
+                '#22c55e',
+                '#f59e0b',
+                '#ef4444'
+            ],
+
+            borderWidth:0
+        }]
+    },
+
+    options:{
+
+        responsive:true,
+
+        plugins:{
+
+            legend:{
+                labels:{
+                    color:'white'
+                }
+            }
+        }
+    }
+});
+
+</script>
+
+{% endif %}
+
+</body>
+
+</html>

@@ -1,0 +1,571 @@
+<!-- FILE NAME: templates/evm.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Secure Voting EVM</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+html{
+    overflow-x:hidden;
+}
+
+body{
+
+    min-height:100vh;
+    width:100%;
+
+    margin:0;
+
+    background:
+    radial-gradient(circle at top left,#0f2c8a 0%,transparent 25%),
+    radial-gradient(circle at bottom right,#2e1065 0%,transparent 25%),
+    #020617;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:40px 20px;
+
+    overflow-x:hidden;
+
+    overflow-y:auto;
+
+    position:relative;
+}
+
+/* BACKGROUND GLOW */
+
+body::before{
+
+    content:'';
+
+    position:absolute;
+
+    width:600px;
+    height:600px;
+
+    background:#2563eb;
+
+    filter:blur(180px);
+
+    opacity:0.12;
+
+    top:-200px;
+    left:-200px;
+}
+
+body::after{
+
+    content:'';
+
+    position:absolute;
+
+    width:500px;
+    height:500px;
+
+    background:#7c3aed;
+
+    filter:blur(180px);
+
+    opacity:0.12;
+
+    bottom:-200px;
+    right:-200px;
+}
+
+/* MAIN CONTAINER */
+
+.container{
+
+    width:min(1100px,100%);
+
+    margin:auto;
+
+    background:rgba(15,23,42,0.78);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    border-radius:35px;
+
+    padding:35px;
+
+    backdrop-filter:blur(20px);
+
+    box-shadow:
+    0 0 40px rgba(37,99,235,0.25),
+    0 20px 60px rgba(0,0,0,0.5);
+
+    position:relative;
+
+    z-index:10;
+}
+
+/* HEADER */
+
+.top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:35px;
+}
+
+.title-section{
+
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.logo{
+
+    width:55px;
+    height:55px;
+
+    border-radius:18px;
+
+    background:linear-gradient(135deg,#4f46e5,#3b82f6);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:28px;
+
+    box-shadow:0 0 25px rgba(59,130,246,0.45);
+}
+
+.title-section h1{
+
+    font-size:48px;
+    font-weight:800;
+
+    color:white;
+}
+
+.title-section p{
+
+    color:#94a3b8;
+    margin-top:4px;
+}
+
+/* LIVE STATUS */
+
+.live-status{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    padding:14px 22px;
+
+    background:rgba(255,255,255,0.05);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    border-radius:16px;
+
+    font-weight:600;
+
+    color:white;
+}
+
+.live-dot{
+
+    width:12px;
+    height:12px;
+
+    background:#22c55e;
+
+    border-radius:50%;
+
+    box-shadow:0 0 15px #22c55e;
+
+    animation:pulse 1s infinite;
+}
+
+.offline-dot{
+
+    width:12px;
+    height:12px;
+
+    background:#64748b;
+
+    border-radius:50%;
+
+    box-shadow:0 0 10px rgba(100,116,139,0.5);
+}
+
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.4);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
+/* MACHINE */
+
+.machine{
+
+    background:rgba(2,6,23,0.45);
+
+    border:1px solid rgba(255,255,255,0.06);
+
+    border-radius:28px;
+
+    padding:25px;
+}
+
+/* CANDIDATE */
+
+.candidate{
+
+    background:rgba(255,255,255,0.05);
+
+    border:1px solid rgba(255,255,255,0.06);
+
+    border-radius:24px;
+
+    padding:20px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:22px;
+
+    transition:0.3s;
+}
+
+.candidate:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 10px 30px rgba(37,99,235,0.2);
+}
+
+.left{
+
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.left img{
+
+    width:80px;
+    height:80px;
+
+    border-radius:18px;
+
+    object-fit:cover;
+
+    border:2px solid rgba(255,255,255,0.08);
+}
+
+.name-section h2{
+
+    font-size:34px;
+    color:white;
+}
+
+.name-section p{
+
+    color:#94a3b8;
+    margin-top:5px;
+}
+
+/* BUTTON */
+
+.vote-btn{
+
+    width:72px;
+    height:72px;
+
+    border:none;
+
+    border-radius:22px;
+
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    position:relative;
+
+    box-shadow:0 0 25px rgba(37,99,235,0.45);
+}
+
+.vote-btn::before{
+
+    content:'';
+
+    position:absolute;
+
+    width:16px;
+    height:16px;
+
+    background:white;
+
+    border-radius:50%;
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%,-50%);
+}
+
+.vote-btn:hover{
+
+    transform:scale(1.08);
+
+    box-shadow:0 0 35px rgba(59,130,246,0.75);
+}
+
+.vote-btn:active{
+
+    transform:scale(0.92);
+}
+
+/* NO ELECTION */
+
+.no-election{
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    padding:80px 20px;
+
+    text-align:center;
+}
+
+.no-icon{
+
+    width:110px;
+    height:110px;
+
+    border-radius:32px;
+
+    background:linear-gradient(135deg,#334155,#475569);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:55px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 0 25px rgba(100,116,139,0.25);
+}
+
+.no-election h1{
+
+    font-size:46px;
+    color:white;
+
+    margin-bottom:14px;
+}
+
+.no-election p{
+
+    color:#94a3b8;
+
+    font-size:17px;
+}
+
+/* FOOTER */
+
+.footer{
+
+    text-align:center;
+
+    margin-top:28px;
+
+    color:#64748b;
+
+    font-size:14px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+    .top{
+
+        flex-direction:column;
+        gap:20px;
+        align-items:flex-start;
+    }
+
+    .title-section h1{
+
+        font-size:34px;
+    }
+
+    .candidate{
+
+        flex-direction:column;
+        gap:20px;
+        align-items:flex-start;
+    }
+
+    .vote-btn{
+
+        width:100%;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- TOP -->
+
+<div class="top">
+
+<div class="title-section">
+
+<div class="logo">
+🗳️
+</div>
+
+<div>
+
+<h1>Electronic Voting Machine</h1>
+
+<p>Secure Voting System</p>
+
+</div>
+
+</div>
+
+<div class="live-status">
+
+{% if candidates %}
+
+<div class="live-dot"></div>
+
+LIVE ELECTION
+
+{% else %}
+
+<div class="offline-dot"></div>
+
+ELECTION CLOSED
+
+{% endif %}
+
+</div>
+
+</div>
+
+<!-- MACHINE -->
+
+<div class="machine">
+
+{% if candidates %}
+
+{% for c in candidates %}
+
+<form method="POST">
+
+<div class="candidate">
+
+<div class="left">
+
+<img src="/static/uploads/{{ c[1] }}" alt="candidate">
+
+<div class="name-section">
+
+<h2>{{ c[0] }}</h2>
+
+<p>
+Press blue button to vote
+</p>
+
+</div>
+
+</div>
+
+<button
+class="vote-btn"
+type="submit"
+name="candidate"
+value="{{ c[0] }}">
+</button>
+
+</div>
+
+</form>
+
+{% endfor %}
+
+{% else %}
+
+<div class="no-election">
+
+<div class="no-icon">
+🗳️
+</div>
+
+<h1>
+No Live Election
+</h1>
+
+<p>
+There is currently no active EVM election available.
+</p>
+
+</div>
+
+{% endif %}
+
+</div>
+
+<div class="footer">
+Secure Voting System © 2026
+</div>
+
+</div>
+
+</body>
+
+</html>

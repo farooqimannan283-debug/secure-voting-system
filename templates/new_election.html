@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Create New Election</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#020617;
+    color:white;
+    display:flex;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* BACKGROUND */
+
+body::before{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:#2563eb;
+    filter:blur(180px);
+    top:-200px;
+    left:-150px;
+    opacity:.35;
+    z-index:-1;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:#7c3aed;
+    filter:blur(180px);
+    bottom:-200px;
+    right:-150px;
+    opacity:.25;
+    z-index:-1;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:260px;
+    background:rgba(8,15,40,.88);
+    border-right:1px solid rgba(255,255,255,.06);
+    backdrop-filter:blur(20px);
+    padding:35px 18px;
+}
+
+.logo{
+    font-size:42px;
+    font-weight:800;
+    color:#3b82f6;
+    margin-bottom:45px;
+}
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.menu a{
+    text-decoration:none;
+    color:#d1d5db;
+    padding:16px 18px;
+    border-radius:14px;
+    transition:.3s;
+    font-weight:500;
+}
+
+.menu a:hover,
+.menu a.active{
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+    color:white;
+    box-shadow:0 0 20px rgba(59,130,246,.35);
+}
+
+/* MAIN */
+
+.main{
+    flex:1;
+    padding:40px;
+}
+
+.title{
+    font-size:54px;
+    font-weight:800;
+}
+
+.subtitle{
+    color:#94a3b8;
+    margin-top:8px;
+    margin-bottom:28px;
+}
+
+/* CARD */
+
+.card{
+    width:100%;
+    background:rgba(7,15,40,.72);
+    border:1px solid rgba(255,255,255,.05);
+    border-radius:30px;
+    padding:34px;
+    backdrop-filter:blur(18px);
+    box-shadow:0 0 45px rgba(0,0,0,.4);
+}
+
+/* FORM */
+
+.form-group{
+    margin-bottom:24px;
+}
+
+label{
+    display:block;
+    margin-bottom:10px;
+    color:#dbeafe;
+    font-weight:600;
+    font-size:15px;
+}
+
+input,
+select{
+    width:100%;
+    padding:18px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.05);
+    background:rgba(255,255,255,.04);
+    color:white;
+    outline:none;
+    font-size:15px;
+}
+
+input::placeholder{
+    color:#64748b;
+}
+
+/* FIX DATE INPUT */
+
+input[type="datetime-local"]{
+    color:white;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator{
+    filter:invert(1);
+    cursor:pointer;
+}
+
+.row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+/* MODE BUTTONS */
+
+.mode-box{
+    display:flex;
+    gap:16px;
+}
+
+.mode-option{
+    flex:1;
+    position:relative;
+}
+
+.mode-option input{
+    display:none;
+}
+
+.mode-option label{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:18px;
+    border-radius:16px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.06);
+    cursor:pointer;
+    transition:.3s;
+}
+
+.mode-option input:checked + label{
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+    box-shadow:0 0 25px rgba(37,99,235,.35);
+}
+
+/* CANDIDATES */
+
+.candidate-box{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.05);
+    padding:24px;
+    border-radius:22px;
+    margin-bottom:20px;
+}
+
+.candidate-title{
+    color:#60a5fa;
+    font-weight:700;
+    margin-bottom:18px;
+}
+
+/* FILE INPUT */
+
+input[type="file"]{
+    padding:14px;
+}
+
+/* BUTTONS */
+
+.buttons{
+    display:flex;
+    gap:16px;
+    margin-top:25px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:none;
+    padding:16px 24px;
+    border-radius:16px;
+    font-weight:700;
+    cursor:pointer;
+    color:white;
+    transition:.3s;
+}
+
+.add-btn{
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+}
+
+.start-btn{
+    background:linear-gradient(90deg,#16a34a,#22c55e);
+}
+
+.cancel-btn{
+    background:linear-gradient(90deg,#dc2626,#ef4444);
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+    opacity:.95;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+    body{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+    }
+
+    .row{
+        grid-template-columns:1fr;
+    }
+
+    .title{
+        font-size:42px;
+    }
+
+    .mode-box{
+        flex-direction:column;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="logo">
+        SVS Admin
+    </div>
+
+    <div class="menu">
+
+        <a href="/admin/dashboard">
+            📊 Dashboard
+        </a>
+
+        <a href="/admin/new" class="active">
+            🗳 New Election
+        </a>
+
+        <a href="/admin/history">
+            📜 History
+        </a>
+
+    </div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+    <h1 class="title">
+        Create New Election
+    </h1>
+
+    <p class="subtitle">
+        Configure election type, candidates and launch election
+    </p>
+
+    <div class="card">
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <!-- ELECTION NAME -->
+
+            <div class="form-group">
+
+                <label>Election Name</label>
+
+                <input
+                type="text"
+                name="name"
+                placeholder="Enter election name"
+                required>
+
+            </div>
+
+            <!-- ELECTION TYPE -->
+
+            <div class="form-group">
+
+                <label>Election Type</label>
+
+                <div class="mode-box">
+
+                    <div class="mode-option">
+
+                        <input
+                        type="radio"
+                        name="mode"
+                        value="online"
+                        id="online"
+                        checked>
+
+                        <label for="online">
+                            ⚪ Online Election
+                        </label>
+
+                    </div>
+
+                    <div class="mode-option">
+
+                        <input
+                        type="radio"
+                        name="mode"
+                        value="evm"
+                        id="evm">
+
+                        <label for="evm">
+                            ⚫ EVM Election
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- DATES -->
+
+            <div class="row">
+
+                <div class="form-group">
+
+                    <label>Election Start Date</label>
+
+                    <input
+                    type="datetime-local"
+                    name="start_date"
+                    required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Election End Date</label>
+
+                    <input
+                    type="datetime-local"
+                    name="end_date"
+                    required>
+
+                </div>
+
+            </div>
+
+            <!-- CANDIDATES -->
+
+            <div id="candidateArea">
+
+                <!-- CANDIDATE 1 -->
+
+                <div class="candidate-box">
+
+                    <div class="candidate-title">
+                        Candidate 1
+                    </div>
+
+                    <div class="form-group">
+
+                        <input
+                        type="text"
+                        name="candidate_name"
+                        placeholder="Candidate Name"
+                        required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <input
+                        type="file"
+                        name="candidate_image"
+                        accept="image/*">
+
+                    </div>
+
+                </div>
+
+                <!-- CANDIDATE 2 -->
+
+                <div class="candidate-box">
+
+                    <div class="candidate-title">
+                        Candidate 2
+                    </div>
+
+                    <div class="form-group">
+
+                        <input
+                        type="text"
+                        name="candidate_name"
+                        placeholder="Candidate Name"
+                        required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <input
+                        type="file"
+                        name="candidate_image"
+                        accept="image/*">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BUTTONS -->
+
+            <div class="buttons">
+
+                <button
+                type="button"
+                class="btn add-btn"
+                onclick="addCandidate()">
+
+                    ➕ Add Candidate
+
+                </button>
+
+                <button
+                type="submit"
+                class="btn start-btn">
+
+                    🚀 Start Election
+
+                </button>
+
+                <button
+                type="reset"
+                class="btn cancel-btn">
+
+                    Cancel
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+let candidateCount = 2;
+
+function addCandidate(){
+
+    candidateCount++;
+
+    let div = document.createElement("div");
+
+    div.className = "candidate-box";
+
+    div.innerHTML = `
+
+        <div class="candidate-title">
+            Candidate ${candidateCount}
+        </div>
+
+        <div class="form-group">
+
+            <input
+            type="text"
+            name="candidate_name"
+            placeholder="Candidate Name"
+            required>
+
+        </div>
+
+        <div class="form-group">
+
+            <input
+            type="file"
+            name="candidate_image"
+            accept="image/*">
+
+        </div>
+
+    `;
+
+    document
+    .getElementById("candidateArea")
+    .appendChild(div);
+}
+
+</script>
+
+</body>
+</html>

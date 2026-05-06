@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#020617;
+    color:white;
+    display:flex;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* BACKGROUND */
+
+body::before{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:#2563eb;
+    filter:blur(180px);
+    top:-200px;
+    left:-150px;
+    opacity:.35;
+    z-index:-1;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:#7c3aed;
+    filter:blur(180px);
+    bottom:-200px;
+    right:-150px;
+    opacity:.25;
+    z-index:-1;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:250px;
+    background:rgba(8,15,40,.88);
+    border-right:1px solid rgba(255,255,255,.05);
+    backdrop-filter:blur(20px);
+    padding:35px 18px;
+}
+
+.logo{
+    font-size:42px;
+    font-weight:800;
+    color:#3b82f6;
+    margin-bottom:45px;
+}
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.menu a{
+    text-decoration:none;
+    color:#d1d5db;
+    padding:16px 18px;
+    border-radius:14px;
+    transition:.3s;
+    font-weight:500;
+}
+
+.menu a:hover,
+.menu a.active{
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+    color:white;
+    box-shadow:0 0 20px rgba(59,130,246,.35);
+}
+
+/* MAIN */
+
+.main{
+    flex:1;
+    padding:28px;
+}
+
+/* TOPBAR */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:25px;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.title{
+    font-size:64px;
+    font-weight:800;
+    line-height:1;
+}
+
+.subtitle{
+    margin-top:10px;
+    color:#94a3b8;
+}
+
+.top-actions{
+    display:flex;
+    gap:15px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+/* STATUS */
+
+.status-badge{
+    padding:14px 22px;
+    border-radius:16px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.05);
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.live-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#22c55e;
+    box-shadow:0 0 15px #22c55e;
+}
+
+.closed-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#ef4444;
+    box-shadow:0 0 15px #ef4444;
+}
+
+/* BUTTONS */
+
+.password-btn,
+.close-btn{
+    text-decoration:none;
+    color:white;
+    padding:14px 24px;
+    border-radius:16px;
+    font-weight:700;
+    transition:.3s;
+    border:none;
+}
+
+.password-btn{
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+}
+
+.close-btn{
+    background:linear-gradient(90deg,#dc2626,#ef4444);
+}
+
+.password-btn:hover,
+.close-btn:hover{
+    transform:translateY(-2px);
+    opacity:.95;
+}
+
+/* GRID */
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:18px;
+    margin-bottom:18px;
+}
+
+.card{
+    background:rgba(7,15,40,.72);
+    border:1px solid rgba(255,255,255,.05);
+    border-radius:26px;
+    padding:22px;
+    backdrop-filter:blur(18px);
+    box-shadow:0 0 40px rgba(0,0,0,.35);
+}
+
+.card h2{
+    color:#3b82f6;
+    margin-bottom:20px;
+    font-size:20px;
+}
+
+/* TABLE */
+
+.table-card{
+    grid-column:span 2;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    text-align:left;
+    color:#cbd5e1;
+    padding:16px;
+    background:rgba(255,255,255,.03);
+}
+
+td{
+    padding:18px 16px;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+/* LEADER */
+
+.leader-box{
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.leader-name{
+    font-size:54px;
+    color:#3b82f6;
+    font-weight:800;
+}
+
+.leader-votes{
+    font-size:54px;
+    font-weight:800;
+    margin:10px 0;
+}
+
+/* ACTIVITY */
+
+.activity-item{
+    display:flex;
+    justify-content:space-between;
+    padding:14px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.activity-item:last-child{
+    border:none;
+}
+
+/* CHART */
+
+canvas{
+    width:100% !important;
+    height:260px !important;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1200px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .table-card{
+        grid-column:span 1;
+    }
+}
+
+@media(max-width:900px){
+
+    body{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+    }
+
+    .title{
+        font-size:46px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="logo">
+        SVS Admin
+    </div>
+
+    <div class="menu">
+
+        <a href="/admin/dashboard" class="active">
+            📊 Dashboard
+        </a>
+
+        <a href="/admin/new">
+            🗳 New Election
+        </a>
+
+        <a href="/admin/history">
+            📜 History
+        </a>
+
+    </div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+    <!-- TOPBAR -->
+
+    <div class="topbar">
+
+        <div>
+
+            <div class="title">
+                Welcome Admin
+            </div>
+
+            <div class="subtitle">
+                Secure Voting System Analytics Dashboard
+            </div>
+
+        </div>
+
+        <div class="top-actions">
+
+            <!-- LIVE STATUS -->
+
+            {% if election_status == "live" %}
+
+            <div class="status-badge">
+
+                <div class="live-dot"></div>
+
+                LIVE ELECTION
+
+            </div>
+
+            <!-- CLOSE ELECTION BUTTON -->
+
+            <a href="/admin/close" class="close-btn">
+
+                ⛔ Close Election
+
+            </a>
+
+            {% else %}
+
+            <div class="status-badge">
+
+                <div class="closed-dot"></div>
+
+                NO LIVE ELECTION
+
+            </div>
+
+            {% endif %}
+
+            <!-- CHANGE PASSWORD -->
+
+            <a href="/admin/change-password" class="password-btn">
+
+                🔐 Change Password
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+
+    <div class="grid">
+
+        <!-- PIE CHART -->
+
+        <div class="card">
+
+            <h2>
+                Vote Distribution
+            </h2>
+
+            <canvas id="pieChart"></canvas>
+
+        </div>
+
+        <!-- BAR CHART -->
+
+        <div class="card">
+
+            <h2>
+                Candidate Performance
+            </h2>
+
+            <canvas id="barChart"></canvas>
+
+        </div>
+
+        <!-- LINE CHART -->
+
+        <div class="card">
+
+            <h2>
+                Real-Time Vote Trend
+            </h2>
+
+            <canvas id="lineChart"></canvas>
+
+        </div>
+
+    </div>
+
+    <!-- LEADERBOARD -->
+
+    <div class="grid">
+
+        <div class="card table-card">
+
+            <h2>
+                Leaderboard
+            </h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+                        <th>Candidate</th>
+                        <th>Votes</th>
+                        <th>%</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for c in candidates %}
+
+                    <tr>
+
+                        <td>{{ loop.index }}</td>
+
+                        <td>{{ c.name }}</td>
+
+                        <td>{{ c.votes }}</td>
+
+                        <td>{{ c.percent }}%</td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- LEADER -->
+
+        <div class="card leader-box">
+
+            👑
+
+            {% if leader %}
+
+            <div class="leader-name">
+
+                {{ leader.name }}
+
+            </div>
+
+            <div class="leader-votes">
+
+                {{ leader.votes }}
+
+            </div>
+
+            <div style="color:#94a3b8">
+
+                Leading Candidate
+
+            </div>
+
+            {% else %}
+
+            <div class="leader-name">
+
+                No Election
+
+            </div>
+
+            <div class="leader-votes">
+
+                0
+
+            </div>
+
+            <div style="color:#94a3b8">
+
+                No active election
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- LIVE ACTIVITY -->
+
+    <div class="card">
+
+        <h2>
+            Live Vote Activity
+        </h2>
+
+        {% if candidates %}
+
+            {% for c in candidates %}
+
+            <div class="activity-item">
+
+                <div>
+                    🗳 Vote for {{ c.name }}
+                </div>
+
+                <div>
+                    {{ c.votes }} votes
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div style="color:#94a3b8">
+
+                No live activity available
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<script>
+
+const labels = {{ chart_labels|tojson }};
+const votes = {{ chart_votes|tojson }};
+
+/* PIE */
+
+new Chart(document.getElementById('pieChart'), {
+
+    type:'doughnut',
+
+    data:{
+        labels:labels,
+        datasets:[{
+            data:votes,
+            backgroundColor:[
+                '#3b82f6',
+                '#ec4899',
+                '#8b5cf6',
+                '#14b8a6',
+                '#f59e0b'
+            ],
+            borderWidth:0
+        }]
+    },
+
+    options:{
+        responsive:true,
+        plugins:{
+            legend:{
+                labels:{
+                    color:'white'
+                }
+            }
+        }
+    }
+});
+
+/* BAR */
+
+new Chart(document.getElementById('barChart'), {
+
+    type:'bar',
+
+    data:{
+        labels:labels,
+        datasets:[{
+            label:'Votes',
+            data:votes,
+            backgroundColor:'#3b82f6'
+        }]
+    },
+
+    options:{
+        responsive:true,
+        scales:{
+            y:{
+                ticks:{ color:'white' },
+                grid:{ color:'rgba(255,255,255,.05)' }
+            },
+            x:{
+                ticks:{ color:'white' },
+                grid:{ color:'rgba(255,255,255,.05)' }
+            }
+        },
+        plugins:{
+            legend:{
+                labels:{ color:'white' }
+            }
+        }
+    }
+});
+
+/* LINE */
+
+new Chart(document.getElementById('lineChart'), {
+
+    type:'line',
+
+    data:{
+        labels:labels,
+        datasets:[{
+            label:'Votes',
+            data:votes,
+            borderColor:'#38bdf8',
+            backgroundColor:'rgba(56,189,248,.2)',
+            tension:.4,
+            fill:true
+        }]
+    },
+
+    options:{
+        responsive:true,
+        scales:{
+            y:{
+                ticks:{ color:'white' },
+                grid:{ color:'rgba(255,255,255,.05)' }
+            },
+            x:{
+                ticks:{ color:'white' },
+                grid:{ color:'rgba(255,255,255,.05)' }
+            }
+        },
+        plugins:{
+            legend:{
+                labels:{ color:'white' }
+            }
+        }
+    }
+});
+
+</script>
+
+</body>
+</html>

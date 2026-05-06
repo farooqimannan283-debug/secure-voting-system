@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SVS Admin Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+background:
+linear-gradient(rgba(2,6,23,0.92),rgba(2,6,23,0.95)),
+url('https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1920&auto=format&fit=crop');
+
+background-size:cover;
+background-position:center;
+
+}
+
+/* ANIMATED BACKGROUND */
+
+.bg-circle{
+
+position:absolute;
+border-radius:50%;
+filter:blur(100px);
+opacity:0.35;
+animation:float 8s ease-in-out infinite;
+
+}
+
+.circle1{
+width:350px;
+height:350px;
+background:#2563eb;
+top:-100px;
+left:-100px;
+}
+
+.circle2{
+width:300px;
+height:300px;
+background:#7c3aed;
+bottom:-120px;
+right:-80px;
+animation-delay:2s;
+}
+
+.circle3{
+width:250px;
+height:250px;
+background:#06b6d4;
+top:40%;
+left:60%;
+animation-delay:4s;
+}
+
+@keyframes float{
+
+0%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(-25px);
+}
+
+100%{
+transform:translateY(0px);
+}
+
+}
+
+/* LOGIN BOX */
+
+.login-container{
+
+width:430px;
+padding:45px;
+border-radius:30px;
+
+background:rgba(15,23,42,0.78);
+
+border:1px solid rgba(255,255,255,0.08);
+
+backdrop-filter:blur(25px);
+
+box-shadow:
+0 0 60px rgba(37,99,235,0.25),
+0 20px 60px rgba(0,0,0,0.5);
+
+position:relative;
+z-index:10;
+
+}
+
+/* LOGO */
+
+.logo{
+
+display:flex;
+align-items:center;
+justify-content:center;
+gap:12px;
+margin-bottom:25px;
+
+}
+
+.logo-icon{
+
+width:55px;
+height:55px;
+
+background:linear-gradient(135deg,#2563eb,#7c3aed);
+
+border-radius:18px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:28px;
+
+box-shadow:0 0 25px rgba(37,99,235,0.4);
+
+}
+
+.logo-text{
+
+font-size:24px;
+font-weight:700;
+color:white;
+
+}
+
+/* TITLES */
+
+.login-title{
+
+text-align:center;
+font-size:38px;
+font-weight:700;
+margin-bottom:10px;
+color:white;
+
+}
+
+.login-subtitle{
+
+text-align:center;
+color:#94a3b8;
+font-size:15px;
+margin-bottom:35px;
+line-height:1.6;
+
+}
+
+/* INPUTS */
+
+.input-group{
+
+margin-bottom:22px;
+position:relative;
+
+}
+
+.input-group label{
+
+display:block;
+margin-bottom:10px;
+font-size:15px;
+font-weight:500;
+color:#cbd5e1;
+
+}
+
+.input-group input{
+
+width:100%;
+padding:16px 18px;
+
+border-radius:16px;
+border:1px solid rgba(255,255,255,0.08);
+
+background:#0f172a;
+
+color:white;
+font-size:15px;
+
+outline:none;
+transition:0.3s;
+
+}
+
+.input-group input:focus{
+
+border-color:#3b82f6;
+
+box-shadow:0 0 15px rgba(59,130,246,0.3);
+
+}
+
+/* BUTTON */
+
+.login-btn{
+
+width:100%;
+padding:16px;
+
+border:none;
+border-radius:18px;
+
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+
+color:white;
+
+font-size:17px;
+font-weight:600;
+
+cursor:pointer;
+transition:0.3s;
+
+margin-top:10px;
+
+box-shadow:0 10px 25px rgba(37,99,235,0.35);
+
+}
+
+.login-btn:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 15px 35px rgba(37,99,235,0.45);
+
+}
+
+/* FOOTER */
+
+.footer{
+
+text-align:center;
+margin-top:28px;
+font-size:14px;
+color:#64748b;
+
+}
+
+/* GLOW */
+
+.glow-line{
+
+height:3px;
+width:120px;
+
+background:linear-gradient(90deg,#2563eb,#7c3aed);
+
+margin:0 auto 30px auto;
+
+border-radius:20px;
+
+box-shadow:0 0 20px rgba(59,130,246,0.5);
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:500px){
+
+.login-container{
+
+width:92%;
+padding:30px;
+
+}
+
+.login-title{
+
+font-size:30px;
+
+}
+
+.logo-text{
+
+font-size:28px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- BACKGROUND EFFECTS -->
+
+<div class="bg-circle circle1"></div>
+<div class="bg-circle circle2"></div>
+<div class="bg-circle circle3"></div>
+
+<!-- LOGIN CARD -->
+
+<div class="login-container">
+
+<!-- LOGO -->
+
+<div class="logo">
+
+<div class="logo-icon">
+🗳️
+</div>
+
+<div class="logo-text">
+Secure Voting System
+</div>
+
+</div>
+
+<h1 class="login-title">
+Admin Login
+</h1>
+
+<div class="glow-line"></div>
+
+<p class="login-subtitle">
+Secure Voting System Administration Portal
+<br>
+Monitor elections, manage candidates, and track live voting analytics
+</p>
+
+<!-- FORM -->
+
+<form method="POST">
+
+<div class="input-group">
+
+<label>Username</label>
+
+<input
+type="text"
+name="username"
+placeholder="Enter admin username"
+required
+>
+
+</div>
+
+<div class="input-group">
+
+<label>Password</label>
+
+<input
+type="password"
+name="password"
+placeholder="Enter password"
+required
+>
+
+</div>
+
+<button type="submit" class="login-btn">
+🔐 Login to Dashboard
+</button>
+
+</form>
+
+<div class="footer">
+Secure Voting System © 2026
+</div>
+
+</div>
+
+</body>
+</html>

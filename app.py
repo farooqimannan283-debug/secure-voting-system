@@ -1,0 +1,822 @@
+from flask import Flask, render_template, request, redirect, session, jsonify
+import sqlite3
+import os
+import time
+
+app = Flask(__name__)
+app.secret_key = "secret123"
+
+UPLOAD_FOLDER = "static/uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# =========================================
+# DATABASE
+# =========================================
+
+def init_db():
+
+    conn = sqlite3.connect("database.db", timeout=10)
+    c = conn.cursor()
+
+    # Elections
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS elections(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        mode TEXT,
+        status TEXT
+    )
+    """)
+
+    # Candidates
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS candidates(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        election_id INTEGER,
+        name TEXT,
+        image TEXT
+    )
+    """)
+
+    # Votes
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS votes(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        election_id INTEGER,
+        candidate TEXT,
+        phone TEXT
+    )
+    """)
+
+    # Prevent duplicate online voting
+    c.execute("""
+    CREATE UNIQUE INDEX IF NOT EXISTS unique_vote
+    ON votes(election_id, phone)
+    """)
+
+    conn.commit()
+    conn.close()
+
+init_db()
+
+# =========================================
+# HOME
+# =========================================
+
+@app.route("/")
+def home():
+    return redirect("/register")
+
+# =========================================
+# ADMIN LOGIN
+# =========================================
+
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
+
+    if request.method == "POST":
+
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if username == "admin" and password == "admin123":
+
+            session["admin"] = True
+
+            return redirect("/admin/dashboard")
+
+    return render_template("admin.html")
+
+# =========================================
+# ADMIN DASHBOARD
+# =========================================
+
+@app.route("/admin/dashboard")
+def dashboard():
+
+    if "admin" not in session:
+        return redirect("/admin")
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT *
+    FROM elections
+    WHERE status='live'
+    LIMIT 1
+    """)
+
+    election = c.fetchone()
+
+    candidates = []
+    chart_labels = []
+    chart_votes = []
+    total_votes = 0
+    leader = None
+
+    if election:
+
+        eid = election[0]
+
+        c.execute("""
+
+        SELECT c.name,
+               c.image,
+               COUNT(v.id)
+
+        FROM candidates c
+
+        LEFT JOIN votes v
+        ON c.name = v.candidate
+        AND c.election_id = v.election_id
+
+        WHERE c.election_id=?
+
+        GROUP BY c.name
+
+        ORDER BY COUNT(v.id) DESC
+
+        """, (eid,))
+
+        rows = c.fetchall()
+
+        for r in rows:
+            total_votes += r[2]
+
+        for r in rows:
+
+            percent = 0
+
+            if total_votes > 0:
+                percent = round((r[2] / total_votes) * 100, 2)
+
+            data = {
+                "name": r[0],
+                "image": r[1],
+                "votes": r[2],
+                "percent": percent
+            }
+
+            candidates.append(data)
+
+            chart_labels.append(r[0])
+            chart_votes.append(r[2])
+
+        if candidates:
+            leader = candidates[0]
+
+    conn.close()
+
+    election_status = "closed"
+
+    if election:
+        election_status = "live"
+
+    return render_template(
+        "admin_dashboard.html",
+        election=election,
+        candidates=candidates,
+        total_votes=total_votes,
+        leader=leader,
+        chart_labels=chart_labels,
+        chart_votes=chart_votes,
+        election_status=election_status
+    )
+
+# =========================================
+# CREATE NEW ELECTION
+# =========================================
+
+@app.route("/admin/new", methods=["GET", "POST"])
+def new_election():
+
+    if "admin" not in session:
+        return redirect("/admin")
+
+    if request.method == "POST":
+
+        name = request.form["name"]
+        mode = request.form["mode"]
+
+        conn = sqlite3.connect("database.db")
+        c = conn.cursor()
+
+        # CLOSE OLD ELECTIONS
+        c.execute("""
+        UPDATE elections
+        SET status='closed'
+        """)
+
+        # CREATE NEW ELECTION
+        c.execute("""
+        INSERT INTO elections
+        VALUES(NULL,?,?,?)
+        """, (name, mode, "live"))
+
+        eid = c.lastrowid
+
+        names = request.form.getlist("candidate_name")
+        files = request.files.getlist("candidate_image")
+
+        for i, n in enumerate(names):
+
+            filename = ""
+
+            if i < len(files) and files[i].filename:
+
+                filename = files[i].filename
+
+                files[i].save(
+                    os.path.join(UPLOAD_FOLDER, filename)
+                )
+
+            c.execute("""
+            INSERT INTO candidates
+            VALUES(NULL,?,?,?)
+            """, (eid, n, filename))
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/admin/dashboard")
+
+    return render_template("new_election.html")
+
+# =========================================
+# CLOSE ELECTION
+# =========================================
+
+@app.route("/admin/close")
+def close_election():
+
+    if "admin" not in session:
+        return redirect("/admin")
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+    UPDATE elections
+    SET status='closed'
+    WHERE status='live'
+    """)
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/admin/dashboard")
+
+# =========================================
+# HISTORY
+# =========================================
+
+@app.route("/admin/history")
+def history():
+
+    if "admin" not in session:
+        return redirect("/admin")
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+
+    SELECT
+    id,
+    name,
+    mode,
+    status
+
+    FROM elections
+
+    WHERE status='closed'
+
+    ORDER BY id DESC
+
+    """)
+
+    elections = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "history.html",
+        elections=elections
+    )
+
+# =========================================
+# RESULT PAGE
+# =========================================
+
+@app.route("/admin/result/<int:eid>")
+def result(eid):
+
+    if "admin" not in session:
+        return redirect("/admin")
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+
+    SELECT
+    c.name,
+    c.image,
+    COUNT(v.id)
+
+    FROM candidates c
+
+    LEFT JOIN votes v
+    ON c.name = v.candidate
+    AND c.election_id = v.election_id
+
+    WHERE c.election_id=?
+
+    GROUP BY c.name
+
+    ORDER BY COUNT(v.id) DESC
+
+    """, (eid,))
+
+    rows = c.fetchall()
+
+    total_votes = 0
+
+    for r in rows:
+        total_votes += r[2]
+
+    results = []
+
+    for r in rows:
+
+        percent = 0
+
+        if total_votes > 0:
+            percent = round((r[2] / total_votes) * 100, 2)
+
+        results.append({
+            "name": r[0],
+            "image": r[1],
+            "votes": r[2],
+            "percent": percent
+        })
+
+    conn.close()
+
+    return render_template(
+        "result.html",
+        results=results,
+        total_votes=total_votes
+    )
+
+# =========================================
+# EXPORT RESULTS
+# =========================================
+
+@app.route("/admin/export/<int:eid>")
+def export_results(eid):
+
+    if "admin" not in session:
+        return redirect("/admin")
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+
+    SELECT
+    c.name,
+    COUNT(v.id)
+
+    FROM candidates c
+
+    LEFT JOIN votes v
+    ON c.name = v.candidate
+    AND c.election_id = v.election_id
+
+    WHERE c.election_id=?
+
+    GROUP BY c.name
+
+    ORDER BY COUNT(v.id) DESC
+
+    """, (eid,))
+
+    rows = c.fetchall()
+
+    conn.close()
+
+    filename = f"results_{eid}.csv"
+
+    filepath = os.path.join("static", filename)
+
+    with open(filepath, "w", encoding="utf-8") as f:
+
+        f.write("Candidate,Votes\n")
+
+        for r in rows:
+            f.write(f"{r[0]},{r[1]}\n")
+
+    return redirect("/static/" + filename)
+
+# =========================================
+# REGISTER
+# =========================================
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT *
+    FROM elections
+    WHERE mode='online'
+    AND status='live'
+    LIMIT 1
+    """)
+
+    election = c.fetchone()
+
+    conn.close()
+
+    if not election:
+
+        return render_template(
+            "register.html",
+            election_live=False
+        )
+
+    if request.method == "POST":
+
+        fullname = request.form["fullname"]
+        phone = request.form["phone"]
+        dob = request.form["dob"]
+
+        session["fullname"] = fullname
+        session["phone"] = phone
+        session["dob"] = dob
+
+        return redirect("/vote")
+
+    return render_template(
+        "register.html",
+        election_live=True
+    )
+
+# =========================================
+# ONLINE VOTE
+# =========================================
+
+@app.route("/vote", methods=["GET", "POST"])
+def vote():
+
+    if "phone" not in session:
+        return redirect("/register")
+
+    phone = session["phone"]
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT *
+    FROM elections
+    WHERE mode='online'
+    AND status='live'
+    LIMIT 1
+    """)
+
+    election = c.fetchone()
+
+    if not election:
+
+        conn.close()
+
+        return redirect("/register")
+
+    eid = election[0]
+
+    c.execute("""
+    SELECT name,image
+    FROM candidates
+    WHERE election_id=?
+    """, (eid,))
+
+    candidates = c.fetchall()
+
+    if request.method == "POST":
+
+        candidate = request.form["candidate"]
+
+        try:
+
+            c.execute("""
+            INSERT INTO votes
+            VALUES(NULL,?,?,?)
+            """, (eid, candidate, phone))
+
+            conn.commit()
+
+        except Exception:
+
+            conn.rollback()
+            conn.close()
+
+            return "Already voted"
+
+        session.clear()
+
+        conn.close()
+
+        return redirect("/success")
+
+    conn.close()
+
+    return render_template(
+        "vote.html",
+        candidates=candidates
+    )
+
+# =========================================
+# SUCCESS
+# =========================================
+
+@app.route("/success")
+def success():
+    return render_template("success.html")
+
+# =========================================
+# EVM
+# =========================================
+
+@app.route("/evm", methods=["GET", "POST"])
+def evm():
+
+    conn = sqlite3.connect("database.db", timeout=10)
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT *
+    FROM elections
+    WHERE mode='evm'
+    AND status='live'
+    LIMIT 1
+    """)
+
+    election = c.fetchone()
+
+    if not election:
+
+        conn.close()
+
+        return render_template(
+            "evm.html",
+            election_live=False,
+            candidates=[]
+        )
+
+    eid = election[0]
+
+    c.execute("""
+    SELECT name,image
+    FROM candidates
+    WHERE election_id=?
+    """, (eid,))
+
+    candidates = c.fetchall()
+
+    # VOTE SUBMIT
+    if request.method == "POST":
+
+        candidate = request.form["candidate"]
+
+        try:
+
+            unique_voter = "evm_" + str(time.time())
+
+            c.execute("""
+            INSERT INTO votes
+            VALUES(NULL,?,?,?)
+            """, (eid, candidate, unique_voter))
+
+            conn.commit()
+
+        except Exception as e:
+
+            conn.rollback()
+            conn.close()
+
+            return str(e)
+
+        conn.close()
+
+        return redirect("/evm_success")
+
+    conn.close()
+
+    return render_template(
+        "evm.html",
+        election_live=True,
+        candidates=candidates
+    )
+
+# =========================================
+# EVM SUCCESS
+# =========================================
+
+@app.route("/evm_success")
+def evm_success():
+    return render_template("evm_success.html")
+
+# =========================================
+# MOBILE LIVE RESULTS
+# =========================================
+
+@app.route("/live")
+def mobile_live():
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+
+    SELECT candidate,
+           COUNT(id)
+
+    FROM votes
+
+    GROUP BY candidate
+
+    ORDER BY COUNT(id) DESC
+
+    """)
+
+    rows = c.fetchall()
+
+    total = sum(r[1] for r in rows)
+
+    data = []
+
+    for r in rows:
+
+        percent = 0
+
+        if total > 0:
+            percent = round((r[1] / total) * 100, 2)
+
+        data.append((r[0], r[1], percent))
+
+    conn.close()
+
+    return render_template(
+        "mobile_live.html",
+        data=data
+    )
+
+# =========================================
+# TV MODE
+# =========================================
+
+@app.route("/tv")
+def tv_mode():
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+
+    SELECT candidate,
+           COUNT(id)
+
+    FROM votes
+
+    GROUP BY candidate
+
+    ORDER BY COUNT(id) DESC
+
+    """)
+
+    rows = c.fetchall()
+
+    total = sum(r[1] for r in rows)
+
+    data = []
+
+    for r in rows:
+
+        percent = 0
+
+        if total > 0:
+            percent = round((r[1] / total) * 100, 2)
+
+        data.append((r[0], r[1], percent))
+
+    conn.close()
+
+    return render_template(
+        "tv_mode.html",
+        data=data
+    )
+
+# =========================================
+# LIVE DATA API
+# =========================================
+
+@app.route("/admin/live-data")
+def live_data():
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT *
+    FROM elections
+    WHERE status='live'
+    LIMIT 1
+    """)
+
+    election = c.fetchone()
+
+    if not election:
+
+        conn.close()
+
+        return jsonify({
+            "labels": [],
+            "votes": [],
+            "activity": []
+        })
+
+    eid = election[0]
+
+    c.execute("""
+
+    SELECT c.name,
+           COUNT(v.id)
+
+    FROM candidates c
+
+    LEFT JOIN votes v
+    ON c.name=v.candidate
+    AND c.election_id=v.election_id
+
+    WHERE c.election_id=?
+
+    GROUP BY c.name
+
+    ORDER BY COUNT(v.id) DESC
+
+    """, (eid,))
+
+    rows = c.fetchall()
+
+    labels = []
+    votes = []
+
+    for r in rows:
+
+        labels.append(r[0])
+        votes.append(r[1])
+
+    c.execute("""
+
+    SELECT candidate, phone
+
+    FROM votes
+
+    WHERE election_id=?
+
+    ORDER BY id DESC
+
+    LIMIT 5
+
+    """, (eid,))
+
+    activity_rows = c.fetchall()
+
+    activity = []
+
+    for a in activity_rows:
+
+        activity.append({
+            "candidate": a[0],
+            "phone": a[1]
+        })
+
+    conn.close()
+
+    return jsonify({
+        "labels": labels,
+        "votes": votes,
+        "activity": activity
+    })
+
+# =========================================
+# RUN
+# =========================================
+
+if __name__ == "__main__":
+    app.run(debug=True)
