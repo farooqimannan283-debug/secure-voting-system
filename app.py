@@ -305,6 +305,45 @@ def close_election():
     return redirect("/admin/dashboard")
 
 # =========================================
+# HISTORY
+# =========================================
+
+@app.route("/admin/history")
+def history():
+
+    if "admin" not in session:
+        return redirect("/admin")
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+
+    SELECT
+    id,
+    name,
+    mode,
+    status
+
+    FROM elections
+
+    WHERE status='closed'
+
+    ORDER BY id DESC
+
+    """)
+
+    elections = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "history.html",
+        elections=elections
+    )
+
+
+# =========================================
 # REGISTER PAGE
 # =========================================
 
